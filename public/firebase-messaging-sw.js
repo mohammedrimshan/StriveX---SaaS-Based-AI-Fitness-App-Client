@@ -6,7 +6,7 @@ try {
     apiKey: "AIzaSyB6ab6kU8avLsICZEFfTasajoRJH_fg4ZA",
     authDomain: "strivex-6233b.firebaseapp.com",
     projectId: "strivex-6233b",
-    storageBucket: "strivex-6233b.firebasestorage.app",
+    storageBucket: "strivex-6233b.appspot.com", // ✅ fixed here
     messagingSenderId: "537396482027",
     appId: "1:537396482027:web:91c1217f7d9ddd00c9d3ae",
     measurementId: "G-EHQQW9DLZR",
