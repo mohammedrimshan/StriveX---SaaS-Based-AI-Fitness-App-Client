@@ -78,7 +78,7 @@ const WorkoutDetails = () => {
       return;
     }
 
-    const socketInstance = io("http://localhost:5001");
+    const socketInstance = io("https://api.strivex.rimshan.in");
     socketInstance.on("connect", () => {
       socketInstance.emit("register", { userId, role: "client" });
     });
