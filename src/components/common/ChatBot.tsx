@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Send, User, Bot, Sparkles, Heart, Leaf, Star } from "lucide-react";
 import { io, Socket } from "socket.io-client";
 import type { RootState } from "@/store/store";
+import ReactMarkdown from "react-markdown";
 
 let socket: Socket;
 
@@ -91,7 +92,7 @@ const Chatbot = () => {
   }, [chatMessages]);
 
   useEffect(() => {
-    socket = io("https://api.strivex.rimshan.in"); // Your backend URL
+    socket = io("http://localhost:5001"); // Your backend URL
 
     socket.on("connect", () => {
       console.log("Connected to Chatbot");
@@ -363,144 +364,150 @@ const Chatbot = () => {
               ))}
             </div>
 
-            <div
-              className="flex-1 p-4 space-y-4 overflow-y-auto custom-scrollbar"
-              style={{
-                background: `linear-gradient(to bottom, ${themeData.light}40, white)`,
+           <div
+  className="flex-1 p-4 space-y-4 overflow-y-auto custom-scrollbar"
+  style={{
+    background: `linear-gradient(to bottom, ${themeData.light}40, white)`,
+  }}
+>
+  <AnimatePresence mode="popLayout">
+    {chatMessages.map((message, index) => (
+      <motion.div
+        key={message.id}
+        variants={messageVariants}
+        initial="hidden"
+        animate="visible"
+        layout
+        className={`flex gap-3 ${message.from === "user" ? "justify-end" : "justify-start"}`}
+      >
+        {message.from === "bot" && (
+          <motion.div
+            className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 relative overflow-hidden"
+            style={{ backgroundColor: themeData.bg }}
+            whileHover={{ scale: 1.1 }}
+          >
+            <Bot className="h-4 w-4" style={{ color: themeData.primary }} />
+            <motion.div
+              className="absolute inset-0 rounded-full"
+              style={{ backgroundColor: themeData.secondary }}
+              animate={{
+                scale: [1, 1.3, 1],
+                opacity: [0, 0.3, 0],
               }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                delay: index * 0.1,
+                ease: "easeInOut",
+              }}
+            />
+          </motion.div>
+        )}
+        <motion.div
+          className={`max-w-[75%] px-4 py-3 rounded-2xl shadow-sm text-sm relative overflow-hidden ${
+            message.from === "user" ? "text-white rounded-br-md" : "text-gray-800 rounded-bl-md border-0"
+          }`}
+          style={{
+            background:
+              message.from === "user"
+                ? `linear-gradient(135deg, ${themeData.primary}, ${themeData.secondary})`
+                : `linear-gradient(135deg, white, ${themeData.light}60)`,
+            backdropFilter: "blur(10px)",
+            border: message.from === "bot" ? `1px solid ${themeData.bg}` : "none",
+          }}
+          whileHover={{ scale: 1.02 }}
+        >
+          {/* Updated rendering for bot messages using ReactMarkdown */}
+          {message.from === "bot" ? (
+            
+            <ReactMarkdown children={message.text} />
+          ) : (
+            <p className="break-words relative z-10">{message.text}</p>
+          )}
+          {message.from === "bot" && "source" in message && (
+            <motion.div
+              className="mt-2"
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
             >
-              <AnimatePresence mode="popLayout">
-                {chatMessages.map((message, index) => (
-                  <motion.div
-                    key={message.id}
-                    variants={messageVariants}
-                    initial="hidden"
-                    animate="visible"
-                    layout
-                    className={`flex gap-3 ${message.from === "user" ? "justify-end" : "justify-start"}`}
-                  >
-                    {message.from === "bot" && (
-                      <motion.div
-                        className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 relative overflow-hidden"
-                        style={{ backgroundColor: themeData.bg }}
-                        whileHover={{ scale: 1.1 }}
-                      >
-                        <Bot className="h-4 w-4" style={{ color: themeData.primary }} />
-                        <motion.div
-                          className="absolute inset-0 rounded-full"
-                          style={{ backgroundColor: themeData.secondary }}
-                          animate={{
-                            scale: [1, 1.3, 1],
-                            opacity: [0, 0.3, 0],
-                          }}
-                          transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                            delay: index * 0.1,
-                            ease: "easeInOut",
-                          }}
-                        />
-                      </motion.div>
-                    )}
-                    <motion.div
-                      className={`max-w-[75%] px-4 py-3 rounded-2xl shadow-sm text-sm relative overflow-hidden ${
-                        message.from === "user" ? "text-white rounded-br-md" : "text-gray-800 rounded-bl-md border-0"
-                      }`}
-                      style={{
-                        background:
-                          message.from === "user"
-                            ? `linear-gradient(135deg, ${themeData.primary}, ${themeData.secondary})`
-                            : `linear-gradient(135deg, white, ${themeData.light}60)`,
-                        backdropFilter: "blur(10px)",
-                        border: message.from === "bot" ? `1px solid ${themeData.bg}` : "none",
-                      }}
-                      whileHover={{ scale: 1.02 }}
-                    >
-                      <p className="break-words relative z-10">{message.text}</p>
-                      {message.from === "bot" && "source" in message && (
-                        <motion.div
-                          className="mt-2"
-                          initial={{ opacity: 0, y: 5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.2 }}
-                        >
-                          <span
-                            className={`text-xs px-2 py-1 rounded-full font-medium ${
-                              message.source === "gemini" ? "text-blue-700" : "text-amber-700"
-                            }`}
-                            style={{
-                              backgroundColor: message.source === "gemini" ? "#dbeafe" : "#fef3c7",
-                            }}
-                          >
-                            {message.source === "gemini" ? "🤖 AI Powered" : "⚡ Quick Response"}
-                          </span>
-                        </motion.div>
-                      )}
-                      {message.from === "user" && (
-                        <motion.div
-                          className="absolute inset-0 rounded-2xl"
-                          style={{
-                            background: `linear-gradient(135deg, ${themeData.secondary}, ${themeData.primary})`,
-                          }}
-                          animate={{ rotate: [0, 360] }}
-                          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                        />
-                      )}
-                    </motion.div>
-                    {message.from === "user" && (
-                      <motion.div
-                        className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden relative"
-                        style={{ backgroundColor: themeData.bg }}
-                        whileHover={{ scale: 1.1 }}
-                      >
-                        {userProfileImage ? (
-                          <img src={userProfileImage} alt="User" className="w-full h-full object-cover" />
-                        ) : (
-                          <User className="h-4 w-4" style={{ color: themeData.primary }} />
-                        )}
-                      </motion.div>
-                    )}
-                  </motion.div>
-                ))}
-                {isTyping && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="flex gap-3 justify-start"
-                  >
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: themeData.bg }}
-                    >
-                      <Bot className="h-4 w-4" style={{ color: themeData.primary }} />
-                    </div>
-                    <div className="px-4 py-3 rounded-2xl rounded-bl-md" style={{ backgroundColor: themeData.light }}>
-                      <div className="flex gap-1">
-                        {[0, 1, 2].map((i) => (
-                          <motion.div
-                            key={i}
-                            className="w-2 h-2 rounded-full"
-                            style={{ backgroundColor: themeData.secondary }}
-                            animate={{
-                              scale: [1, 1.5, 1],
-                              opacity: [0.5, 1, 0.5],
-                            }}
-                            transition={{
-                              duration: 1,
-                              repeat: Infinity,
-                              delay: i * 0.2,
-                              ease: "easeInOut",
-                            }}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              <div ref={messagesEndRef} />
-            </div>
+              <span
+                className={`text-xs px-2 py-1 rounded-full font-medium ${
+                  message.source === "gemini" ? "text-blue-700" : "text-amber-700"
+                }`}
+                style={{
+                  backgroundColor: message.source === "gemini" ? "#dbeafe" : "#fef3c7",
+                }}
+              >
+                {message.source === "gemini" ? "🤖 AI Powered" : "⚡ Quick Response"}
+              </span>
+            </motion.div>
+          )}
+          {message.from === "user" && (
+            <motion.div
+              className="absolute inset-0 rounded-2xl"
+              style={{
+                background: `linear-gradient(135deg, ${themeData.secondary}, ${themeData.primary})`,
+              }}
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+            />
+          )}
+        </motion.div>
+        {message.from === "user" && (
+          <motion.div
+            className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden relative"
+            style={{ backgroundColor: themeData.bg }}
+            whileHover={{ scale: 1.1 }}
+          >
+            {userProfileImage ? (
+              <img src={userProfileImage} alt="User" className="w-full h-full object-cover" />
+            ) : (
+              <User className="h-4 w-4" style={{ color: themeData.primary }} />
+            )}
+          </motion.div>
+        )}
+      </motion.div>
+    ))}
+    {isTyping && (
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        className="flex gap-3 justify-start"
+      >
+        <div
+          className="w-8 h-8 rounded-full flex items-center justify-center"
+          style={{ backgroundColor: themeData.bg }}
+        >
+          <Bot className="h-4 w-4" style={{ color: themeData.primary }} />
+        </div>
+        <div className="px-4 py-3 rounded-2xl rounded-bl-md" style={{ backgroundColor: themeData.light }}>
+          <div className="flex gap-1">
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: themeData.secondary }}
+                animate={{
+                  scale: [1, 1.5, 1],
+                  opacity: [0.5, 1, 0.5],
+                }}
+                transition={{
+                  duration: 1,
+                  repeat: Infinity,
+                  delay: i * 0.2,
+                  ease: "easeInOut",
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    )}
+  </AnimatePresence>
+  <div ref={messagesEndRef} />
+</div>
 
             <form
               onSubmit={handleChatSubmit}
