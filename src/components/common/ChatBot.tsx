@@ -91,7 +91,7 @@ const Chatbot = () => {
   }, [chatMessages]);
 
   useEffect(() => {
-    socket = io("https://strivex.rimshan.in"); // Your backend URL
+    socket = io("https://api.strivex.rimshan.in"); // Your backend URL
 
     socket.on("connect", () => {
       console.log("Connected to Chatbot");
