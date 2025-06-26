@@ -197,6 +197,11 @@ const navItems = {
       path: "/admin/session-history",
     },
     {
+      title: "Backup clients Management",
+      icon: Users,
+      path: "/admin/backupclients",
+    },
+    {
       title: "Settings",
       icon: Settings,
       path: "/admin/settings",

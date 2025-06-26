@@ -11,7 +11,7 @@ import {
   Upload
 } from 'lucide-react';
 import { useToaster } from '@/hooks/ui/useToaster';
-import Chatbot from './ChatBot';
+
 
 interface FAQ {
   question: string;
@@ -277,9 +277,6 @@ const SupportPage = () => {
           </div>
         </motion.section>
       </div>
-
-      {/* Chatbot Component */}
-      <Chatbot />
     </div>
   );
 };
