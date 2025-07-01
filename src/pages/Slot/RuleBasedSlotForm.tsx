@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
+import { useToaster } from '@/hooks/ui/useToaster';
 import { CalendarModal } from './DatePicker';
 import { TimePicker } from './TimePicker';
 import { RuleBasedSlotInput, Weekday } from '@/types/Slot';
@@ -43,6 +43,7 @@ export const RuleBasedSlotForm: React.FC<RuleBasedSlotFormProps> = ({
     slotDurationInMinutes: 30, // Fixed to 30 minutes
   });
 
+  const { successToast, errorToast } = useToaster();
   // Handle form input changes
   const handleInputChange = (field: keyof RuleBasedSlotInput, value: any) => {
     setFormData((prev) => ({
@@ -84,28 +85,28 @@ export const RuleBasedSlotForm: React.FC<RuleBasedSlotFormProps> = ({
 
     // Validate form data
     if (!formData.fromDate) {
-      toast.error('Please select a start date');
+      errorToast('Please select a start date');
       return;
     }
     if (!formData.toDate) {
-      toast.error('Please select an end date');
+      errorToast('Please select an end date');
       return;
     }
     if (new Date(formData.fromDate) > new Date(formData.toDate)) {
-      toast.error('End date must be after start date');
+      errorToast('End date must be after start date');
       return;
     }
     if (Object.keys(formData.rules).length === 0) {
-      toast.error('Please select at least one weekday with valid times');
+      errorToast('Please select at least one weekday with valid times');
       return;
     }
     for (const [weekday, times] of Object.entries(formData.rules)) {
       if (!times.start || !times.end) {
-        toast.error(`Please set start and end times for ${weekday}`);
+        errorToast(`Please set start and end times for ${weekday}`);
         return;
       }
       if (times.start >= times.end) {
-        toast.error(`End time must be after start time for ${weekday}`);
+        errorToast(`End time must be after start time for ${weekday}`);
         return;
       }
     }
@@ -122,7 +123,7 @@ export const RuleBasedSlotForm: React.FC<RuleBasedSlotFormProps> = ({
   // Reset form on success
   useEffect(() => {
     if (isSuccess) {
-      toast.success('Rule-based slots created successfully!');
+      successToast('Rule-based slots created successfully!');
       setFormData({
         trainerId,
         rules: {},
@@ -132,7 +133,7 @@ export const RuleBasedSlotForm: React.FC<RuleBasedSlotFormProps> = ({
       });
     }
     if (isError && error) {
-      toast.error(`Error: ${error.message}`);
+      errorToast(`Error: ${error.message}`);
     }
   }, [isSuccess, isError, error, trainerId]);
 
