@@ -141,7 +141,7 @@ export const SocketProvider = ({
       return;
     }
 
-    const socketUrl = "hhttps://api.strivex.rimshan.in"; // Replace with your actual socket URL
+    const socketUrl = "https://api.strivex.rimshan.in"; // Replace with your actual socket URL
 
     console.log(socketUrl, "Socket URL");
     const newSocket = io(socketUrl, {
