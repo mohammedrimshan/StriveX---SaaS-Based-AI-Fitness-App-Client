@@ -138,7 +138,7 @@ export default function UsersPage({
   const getUserSpecialization = (user: IClient | ITrainer) => {
     if (userType === "client") {
       const client = user as IClient;
-      return client.specialization || client.preferences?.[0] || "Workout";
+      return client.preferredWorkout || client.preferences?.[0] || "Workout";
     } else {
       const trainer = user as ITrainer;
       return trainer.specialization?.[0] || trainer.skills?.[0] || "Workout";
