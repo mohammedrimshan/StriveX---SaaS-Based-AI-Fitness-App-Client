@@ -187,7 +187,8 @@ const VideoCall: React.FC<VideoCallProps> = ({ slotId, userId, role, userInfo })
     const token = getCookie(role === "trainer" ? "trainer_access_token" : "client_access_token")
     logWithTimestamp("Token from cookie:", token ? "[SET]" : "[UNSET]")
 
-    socketRef.current = io(`${SOCKET_URL}${SOCKET_PATH}`, {
+    socketRef.current = io(SOCKET_URL, {
+      path: SOCKET_PATH,
       query: { userId },
       auth: token ? { token } : { userId },
       transports: ["websocket", "polling"],
