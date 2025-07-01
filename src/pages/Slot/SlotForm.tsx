@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { toast } from "sonner";
 import { CalendarModal } from './DatePicker';
 import { TimePicker } from './TimePicker';
-import { SlotFormProps,SlotFormData } from '@/types/Slot';
+import { SlotFormProps, SlotFormData } from '@/types/Slot';
 
 export const SlotForm: React.FC<SlotFormProps> = ({
   onSubmit,
@@ -104,6 +104,7 @@ export const SlotForm: React.FC<SlotFormProps> = ({
               value={formData.startTime}
               onChange={(value) => handleInputChange('startTime', value)}
               label="Start Time"
+              selectedDate={formData.date} // Pass selected date
             />
           </div>
           
@@ -114,6 +115,7 @@ export const SlotForm: React.FC<SlotFormProps> = ({
               value={formData.endTime}
               onChange={(value) => handleInputChange('endTime', value)}
               label="End Time"
+              selectedDate={formData.date} // Pass selected date
             />
           </div>
         </div>
