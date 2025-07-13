@@ -1,4 +1,4 @@
-import { trainerAxiosInstance } from "@/api/trainer.axios";
+
 import { IClient, ITrainer } from "@/types/User";
 import { CategoryResponse } from "@/hooks/admin/useAllCategory";
 import { IAxiosResponse } from "@/types/Response";
@@ -15,7 +15,7 @@ import {
   ISessionHistory,
 } from "@/types/TrainerDashboard";
 import { Review } from "@/types/trainer";
-
+import { axiosInstance } from "@/api/private.axios";
 
 interface GetTrainerSlotsParams {
   trainerId: string;
@@ -81,7 +81,7 @@ export interface ClientRequestActionResponse {
 
 // Get trainer profile information
 export const getTrainerProfile = async (): Promise<any> => {
-  const response = await trainerAxiosInstance.get("/trainer/profile");
+  const response = await axiosInstance.get("/trainer/profile");
   return response.data;
 };
 
@@ -90,7 +90,7 @@ export const updateTrainerProfile = async (
   trainerId: string,
   profileData: Partial<ITrainer>
 ): Promise<{ success: boolean; message: string; trainer: ITrainer }> => {
-  const response = await trainerAxiosInstance.put(
+  const response = await axiosInstance.put(
     `/trainer/${trainerId}/profile`,
     profileData
   );
@@ -102,7 +102,7 @@ export const updateTrainerPassword = async ({
   currentPassword,
   newPassword,
 }: UpdatePasswordData) => {
-  const response = await trainerAxiosInstance.put<IAxiosResponse>(
+  const response = await axiosInstance.put<IAxiosResponse>(
     "/trainer/update-password",
     {
       currentPassword,
@@ -117,7 +117,7 @@ export const updateTrainerPassword = async ({
 export const uploadTrainerCredential = async (
   credentialData: FormData
 ): Promise<any> => {
-  const response = await trainerAxiosInstance.post(
+  const response = await axiosInstance.post(
     "/trainer/credentials",
     credentialData,
     {
@@ -130,7 +130,7 @@ export const uploadTrainerCredential = async (
 };
 
 export const getAllCategoriesForTrainer = async () => {
-  const response = await trainerAxiosInstance.get<CategoryResponse>(
+  const response = await axiosInstance.get<CategoryResponse>(
     "/trainer/getallcategory"
   );
   return response.data;
@@ -141,7 +141,7 @@ export const getTrainerClients = async (
   limit: number = 10
 ): Promise<TrainerClientsPaginatedResponse> => {
   const response =
-    await trainerAxiosInstance.get<TrainerClientsPaginatedResponse>(
+    await axiosInstance.get<TrainerClientsPaginatedResponse>(
       "/trainer/clients",
       {
         params: { page, limit },
@@ -156,7 +156,7 @@ export const getPendingClientRequests = async (
   limit: number = 10
 ): Promise<PendingClientRequestsResponse> => {
   const response =
-    await trainerAxiosInstance.get<PendingClientRequestsResponse>(
+    await axiosInstance.get<PendingClientRequestsResponse>(
       "/trainer/pending-requests",
       {
         params: { page, limit },
@@ -178,7 +178,7 @@ export const acceptRejectClientRequest = async (
   };
 
   console.log("Sending accept/reject request with payload:", payload);
-  const response = await trainerAxiosInstance.post<ClientRequestActionResponse>(
+  const response = await axiosInstance.post<ClientRequestActionResponse>(
     "/trainer/client-request",
     payload
   );
@@ -191,7 +191,7 @@ export const createSlot = async (
   data: CreateSlotData
 ): Promise<SlotsResponse> => {
   try {
-    const response = await trainerAxiosInstance.post<SlotsResponse>(
+    const response = await axiosInstance.post<SlotsResponse>(
       "/trainer/create",
       data
     );
@@ -206,8 +206,8 @@ export const createSlot = async (
 // Get trainer's own slots
 export const getTrainerOwnSlots = async (): Promise<SlotsResponse> => {
   try {
-    const response = await trainerAxiosInstance.get<SlotsResponse>(
-      "/trainer/trainerslots"
+    const response = await axiosInstance.get<SlotsResponse>(
+      "/trainer/trainerownslots"
     );
     console.log("Trainer's own slots:", response.data);
     return response.data;
@@ -226,7 +226,7 @@ export const getTrainerBookedAndCancelledSlots = async ({
   limit,
 }: GetTrainerSlotsParams): Promise<SlotsResponse> => {
   try {
-    const response = await trainerAxiosInstance.get<SlotsResponse>(
+    const response = await axiosInstance.get<SlotsResponse>(
       "/trainer/slotbooks",
       {
         params: { trainerId, date, page, limit },
@@ -249,7 +249,7 @@ export const getTrainerWalletHistory = async (
   status?: string
 ): Promise<WalletHistoryResponse> => {
   try {
-    const response = await trainerAxiosInstance.get<WalletHistoryResponse>(
+    const response = await axiosInstance.get<WalletHistoryResponse>(
       "/trainer/wallet-history",
       {
         params: { page, limit, status },
@@ -288,7 +288,7 @@ export const getTrainerDashboardStats = async (
   month: number
 ): Promise<ITrainerDashboardStats> => {
   try {
-    const response = await trainerAxiosInstance.get(
+    const response = await axiosInstance.get(
       `/trainer/${trainerId}/stats`,
       { params: { year, month } }
     );
@@ -305,7 +305,7 @@ export const getUpcomingSessions = async (
   limit: number = 5
 ): Promise<IUpcomingSession[]> => {
   try {
-    const response = await trainerAxiosInstance.get(
+    const response = await axiosInstance.get(
       `/trainer/${trainerId}/upcoming-sessions`,
       { params: { limit } }
     );
@@ -323,7 +323,7 @@ export const getWeeklySessionStats = async (
   month: number
 ): Promise<IWeeklySessionStats[]> => {
   try {
-    const response = await trainerAxiosInstance.get(
+    const response = await axiosInstance.get(
       `/trainer/${trainerId}/weekly-stats`,
       { params: { year, month } }
     );
@@ -340,7 +340,7 @@ export const getClientFeedback = async (
   limit: number = 5
 ): Promise<IClientFeedback[]> => {
   try {
-    const response = await trainerAxiosInstance.get(
+    const response = await axiosInstance.get(
       `/trainer/${trainerId}/feedback`,
       { params: { limit } }
     );
@@ -358,7 +358,7 @@ export const getEarningsReport = async (
   month: number
 ): Promise<IEarningsReport> => {
   try {
-    const response = await trainerAxiosInstance.get(
+    const response = await axiosInstance.get(
       `/trainer/${trainerId}/earnings`,
       { params: { year, month } }
     );
@@ -375,7 +375,7 @@ export const getClientProgress = async (
   limit: number = 3
 ): Promise<IClientProgress[]> => {
   try {
-    const response = await trainerAxiosInstance.get(
+    const response = await axiosInstance.get(
       `/trainer/${trainerId}/client-progress`,
       { params: { limit } }
     );
@@ -392,7 +392,7 @@ export const getSessionHistory = async (
   filters: { date?: string; clientId?: string; status?: string }
 ): Promise<ISessionHistory[]> => {
   try {
-    const response = await trainerAxiosInstance.get(
+    const response = await axiosInstance.get(
       `/trainer/${trainerId}/session-history`,
       { params: filters }
     );
@@ -410,7 +410,7 @@ export const fetchTrainerReviews = async (
   limit: number = 10
 ): Promise<{ items: Review[]; total: number }> => {
   try {
-    const response = await trainerAxiosInstance.get<{ success: boolean; data: { items: Review[]; total: number } }>(
+    const response = await axiosInstance.get<{ success: boolean; data: { items: Review[]; total: number } }>(
       `/trainer/reviews/${trainerId}`,
       { params: { skip, limit } }
     );
@@ -428,7 +428,7 @@ export const fetchTrainerReviews = async (
 export const cancelTrainerSlot = async (
   payload: CancelSlotData
 ): Promise<CancelSlotResponse> => {
-  const response = await trainerAxiosInstance.post("/trainer/cancel-slot", payload);
+  const response = await axiosInstance.post("/trainer/cancel-slot", payload);
   return response.data;
 };
 
@@ -437,7 +437,7 @@ export const createSlotsFromRule = async (
   data: RuleBasedSlotInput
 ): Promise<SlotsResponse> => {
   try {
-    const response = await trainerAxiosInstance.post<SlotsResponse>(
+    const response = await axiosInstance.post<SlotsResponse>(
       "/trainer/slots/rule",
       data
     );
